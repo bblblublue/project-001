@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Car-Game</title>
+		<link rel="stylesheet" type="text/css" href="css/snowgame.css" />
+		<script src="js/jquery-1.11.0.js" type="text/javascript" charset="utf-8"></script>
+		<script src="js/snowgame.js" type="text/javascript" charset="utf-8"></script>
+
+	</head>
+	<body>
+
+		<!-- 版心 -->
+		<div class="w">
+
+			<!-- 雪花 -->
+			<canvas id="canvas"></canvas>
+			<!-- 跑道旁景 -->
+			<div class="bacground1">
+				<img src="tupian/backgroundL.png">
+				<img src="tupian/backgroundL.png">
+				<img src="tupian/backgroundL.png">
+				<img src="tupian/backgroundL.png">
+			</div>
+			<div class="bacground2">
+				<img src="tupian/backgroundR.png">
+				<img src="tupian/backgroundR.png">
+				<img src="tupian/backgroundR.png">
+				<img src="tupian/backgroundR.png">
+			</div>
+
+			<div class="trankBox">
+				<!-- 游戏的跑道 -->
+				<div class="trank">
+					<!-- 		<img src="tupian/background.png">
+					<img src="tupian/background.png">
+					<img src="tupian/background.png"> -->
+				</div>
+
+				<!-- 赛车 -->
+				<img src="img/Body.png" class="car" id="car">
+				<!-- 障碍车是游戏开始以后随机生成 -->
+				<!-- 按钮 -->
+				<div class="btn">
+					<!-- <div id="returnHead ">
+						<a href="indexHead.html"><img src="img/Logo02.png" ></a>
+					</div> -->
+					<input type="button" id="restart" class="hidden" value="重新开始"></input>
+					<div class="score hidden" id="score">你的得分只有10分</div>
+				</div>
+			</div>
+
+
+
+
+
+
+			<!-- <!-- 雪花特效 -->
+			<script type="text/javascript">
+				var picSub = 0;
+				var time = 100; //时间间隔(毫秒)     
+				var pic1 = "img/Body.png";
+				var pic2 = "img/BodyR.png";
+				var pic3 = "img/BodyL.png";
+
+				var arr2 = [pic1,pic2]
+				function sn02() {
+					var sn1 = setInterval(function changeImg() {
+						var xElem = document.getElementById("car");
+						if (picSub == picArr.length - 1) {
+							picSub = 0;
+						} else {
+							picSub += 1;
+						} //判断是否超出数组长度，若超出，便使数组下标归0,使其不超出
+						xElem.src = arr2[picSub]; //切换图片
+						clearInterval(sn1)
+					},0)
+					setInterval(changeImg, time);	
+				} 
+				
+				var picArr = [pic1, pic3]; //定义数组，并将图片的位置所对应的变量放入其中	
+				function SN() {
+					var sn = setInterval(function changeImg() {	
+						var xElem = document.getElementById("car");
+						if (picSub == picArr.length - 1) {
+							picSub = 0;
+						} else {
+							picSub += 1;
+						} //判断是否超出数组长度，若超出，便使数组下标归0,使其不超出
+						xElem.src = picArr[picSub]; //切换图片
+						clearInterval(sn)
+					},100)
+					setInterval(changeImg, time);	
+				}
+
+				var index = 2;
+				// 1. 键盘监听
+				function moveCar() {
+					//监听键盘点击事件
+					document.onkeydown = function(e) {
+						e = e || window.event;
+						console.log(e)
+						console.log(e.keyCode)
+						
+						// 37  小车向左移动
+						if (e.keyCode == 37) {
+							index = index <= 0 ? 0 : index - 0.5;
+							$(".car").animate({
+								"left": index * 20 + 4 + "%",
+							}, 100)
+							SN();
+							
+						}
+						// 39 向右移动
+						else if (e.keyCode == 39) {		
+							index = index >= 4 ? 4 : index + 0.5;
+							$(".car").animate({
+								"left": index * 20 + 4 + "%",
+							}, 100)						
+							sn02()
+						}
+						// 38  向上移动
+						if (e.keyCode == 38) {
+							index = index <= 0 ? 0 : index - 0.5;
+							$(".car").animate({
+								"top": index * 20 + 4 + "%",
+							}, 100)
+						}
+						// 40 向下移动
+						else if (e.keyCode == 40) {
+							index = index >= 4 ? 4 : index + 0.5;
+							$(".car").animate({
+								"top": index * 20 + 4 + "%",
+							}, 100)
+						}
+					}
+					document.onkeyup = function(e) {
+						e = e || window.event;
+						if (e.keyCode == 37||e.keyCode == 39) {
+							clearInterval(setInterval(changeImg, time));
+						}
+						clearInterval(setInterval(changeImg, time))
+					}
+					
+				}
+				moveCar()
+				
+				
+				// 雪花特效
+				/**
+				 * 定义<canvas>画布;
+				 * @type {[type]}
+				 */
+				var width = window.innerWidth; //获取系统显示宽度;
+				var height = window.innerHeight; //获取系统显示高度;
+				var canvas = document.querySelector("#canvas");
+				var context = canvas.getContext("2d");
+				var snowArray = []; //声明一个数组，用于存放创建出来的雪花对象；
+				canvas.width = width; //设置画布的宽度为系统显示宽度;
+				canvas.height = height; //设置画布的高度为系统显示高度;
+				cartoon(); //调用动画;
+				/**
+				 * 定义雪花类;
+				 */
+				class Snowflake {
+					constructor() {
+						this.init(); //构造函数，调用定义好的init()方法;
+					}
+					init() {
+						this.position = { //雪花对象的位置;
+							x: Math.random() * width, //x坐标随机;
+							y: Math.random() * height, //y坐标随机;
+						}
+						this.speed = Math.random() * 20; //雪花下落速度为0-10以内的随机数;
+						this.r = Math.random() * 6; //雪花的半径为0-6以内的随机数;
+						this.transparency = Math.random(); //设置雪花的透明度为随机;
+						this.color = {
+							r1: 255, //雪花颜色随机;
+							g: 251,
+							b: 255,
+						}
+					}
+					draw() { //雪花绘制方法;
+						this.position.y++; //y坐标每次递增1像素;
+						this.transparency -= 0.01; //透明度每次递减0.01;
+						if (this.transparency <= 0) { //透明度小于0，即雪花消失，重新绘制雪花;
+							this.init();
+						}
+						context.beginPath(); //开始一个新的图形绘制;
+						context.fillStyle = "rgba(" + this.color.r1 + "," + this.color.g + "," + this.color.b + "," + this.transparency +
+							")"; //根据类模型绘制圆形雪花;
+						context.arc(this.position.x, this.position.y, this.r, 0, Math.PI * 2); //填充雪花的颜色;
+						context.fill();
+					}
+				}
+				for (var i = 0; i < 500; i++) {
+					var snow = new Snowflake(); //实例化500个雪花对象;
+					snowArray.push(snow); //将雪花对象添加到数组中;
+				}
+				/**
+				 * 定义动画效果;
+				 * @return {[type]} [description]
+				 */
+				function cartoon() {
+					context.clearRect(0, 0, width, height); //动画完成一次进行清屏操作;
+					for (var j = 0; j < snowArray.length; j++) {
+						snowArray[j].draw(); //将实例化好的每个雪花对象在画布上画出来;
+					}
+					requestAnimationFrame(cartoon); //递归调用动画效果;
+				}
+			</script>
+
+		</div>
+	</body>
+</html>
